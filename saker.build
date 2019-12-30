@@ -1,0 +1,185 @@
+global(VERSION_saker.compiler.utils) = "0.13.8"
+
+static(VERSION_saker.build) = nest.dependency.resolve(
+	saker.build,
+	Filters: nest.dependency.filter.kind([]),
+)[Bundles][0][BundleIdentifier][VersionNumber]
+static(VERSION_saker.nest) = nest.dependency.resolve(
+	saker.nest,
+	Filters: nest.dependency.filter.kind([]),
+)[Bundles][0][BundleIdentifier][VersionNumber]
+
+compile(
+	out javac,
+){
+	$javac = saker.java.compile(
+		SourceDirectories: [
+			main/src/main/,
+			api/src/main/,
+			impl/src/main/,
+		],
+		ClassPath: [
+			saker.java.classpath.bundle([
+				"saker.build-api-v{ static(VERSION_saker.build) }",
+				"saker.nest-api-v{ static(VERSION_saker.nest) }"
+			]),
+		],
+		Identifier: saker.compiler.utils,
+	)
+}
+export(
+	out compile = include(compile),
+	out jar,
+	out apijar,
+	out impljar,
+	out sourcejar,
+	
+	out bundlepaths = [
+		$jar[Path],
+		$apijar[Path],
+		$impljar[Path],
+		$sourcejar[Path],
+	]
+){
+	$jar = saker.jar.create(
+		Output: saker.compiler.utils.jar,
+		Resources: [
+			{
+				Directory: main/resources/,
+				Resources: **,
+			},
+			{
+				Directory: $compile[javac][ClassDirectory],
+				Resources: saker/compiler/utils/main/**,
+			},
+		],
+		Manifest: {
+			MainAttributes: {
+				Nest-Bundle-Format-Version: 1,
+				Nest-Bundle-Identifier: "saker.compiler.utils-v{ global(VERSION_saker.compiler.utils) }",
+				Nest-Bundle-Source: "saker.compiler.utils-sources-v{ global(VERSION_saker.compiler.utils) }",
+			},
+		},
+	)
+	$apijar = saker.jar.create(
+		Output: saker.compiler.utils-api.jar,
+		Resources: [
+			{
+				Directory: api/resources/,
+				Resources: **,
+			},
+			{
+				Directory: $compile[javac][ClassDirectory],
+				Resources: saker/compiler/utils/api/**,
+			},
+		],
+		Manifest: {
+			MainAttributes: {
+				Nest-Bundle-Format-Version: 1,
+				Nest-Bundle-Identifier: "saker.compiler.utils-api-v{ global(VERSION_saker.compiler.utils) }",
+				Nest-Bundle-Source: "saker.compiler.utils-sources-v{ global(VERSION_saker.compiler.utils) }",
+			},
+		},
+	)
+	$impljar = saker.jar.create(
+		Output: saker.compiler.utils-impl.jar,
+		Resources: [
+			{
+				Directory: impl/resources/,
+				Resources: **,
+			},
+			{
+				Directory: $compile[javac][ClassDirectory],
+				Resources: saker/compiler/utils/impl/**,
+			},
+		],
+		Manifest: {
+			MainAttributes: {
+				Nest-Bundle-Format-Version: 1,
+				Nest-Bundle-Identifier: "saker.compiler.utils-impl-v{ global(VERSION_saker.compiler.utils) }",
+				Nest-Bundle-Source: "saker.compiler.utils-sources-v{ global(VERSION_saker.compiler.utils) }",
+			},
+		},
+	)
+	$sourcejar = saker.jar.create(
+		Output: saker.compiler.utils-sources.jar,
+		Resources: [
+			{
+				Directory: [
+					main/src/main/,
+					api/src/main/,
+					impl/src/main/,
+				],
+				Resources: **/*.java,
+			},
+		],
+		Manifest: {
+			MainAttributes: {
+				Nest-Bundle-Format-Version: 1,
+				Nest-Bundle-Identifier: "saker.compiler.utils-sources-v{ global(VERSION_saker.compiler.utils) }",
+			},
+		},
+	)
+}
+install(
+	out export = include(export)
+){
+	nest.local.install($export[bundlepaths])
+}
+upload(){
+	$export = include(export, Path: saker.build)
+	include(Path: secret/secrets.build)
+	nest.server.upload(
+		Bundles: $export[bundlepaths],
+		APIKey: global(saker.compiler.utils.UPLOAD_API_KEY),
+		APISecret: global(saker.compiler.utils.UPLOAD_API_SECRET),
+		Overwrite: true,
+	)
+}
+test(){
+	$export = include(export)
+	$jar = $export[jar]
+	
+	$testcompile = saker.java.compile(
+		SourceDirectories: main/src/test/,
+		ClassPath: [
+			$export[compile][javac],
+			saker.java.classpath.bundle("saker.build-test-runner-v{ static(VERSION_saker.build) }"),
+		],
+		Identifier: saker.compiler.utils.tests,
+	)
+	
+	$test = saker.java.test(
+		TestRunnerClassPath: [
+			saker.java.classpath.bundle("saker.build-test-runner-v{ static(VERSION_saker.build) }"),
+		],
+		ClassPath: [
+			saker.java.classpath.bundle("saker.build-test-v{ static(VERSION_saker.build) }"),
+			$export[compile][javac][ClassDirectory],
+		],
+		DependencyClassPath: [
+			$export[compile][javac],
+		],
+		TestInvokerClass: testing.saker.SakerJavaTestingInvoker,
+		TestClassPath:	[
+			$testcompile[ClassDirectory],
+		],
+		TestClasses: [
+			**.*Test
+		],
+		NonDeterministicTests: [
+			**,
+		],
+		TestInvokerParameters: {
+			TimeoutMillis: 120000,
+			TestsBaseBuildDirectory: std.file.mirror.path(std.file.place(test/build)),
+		},
+		IgnoreFileChanges: [
+			std.file.place(test/build),
+		],
+		MaxJVMCount: 1,
+		FailFast: true,
+		AbortOnFail: true,
+		Verbose: true,
+	)
+}

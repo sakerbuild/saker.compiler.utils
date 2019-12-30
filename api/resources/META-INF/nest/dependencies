@@ -1,0 +1,3 @@
+saker.compiler.utils-impl
+	classpath: [this]
+		compile-transitive: false

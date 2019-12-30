@@ -1,0 +1,2 @@
+saker.compiler.utils-api
+	classpath: [this]
