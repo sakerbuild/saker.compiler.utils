@@ -18,7 +18,7 @@ package saker.compiler.utils.main;
 import java.util.Objects;
 
 import saker.build.scripting.model.info.TypeInformationKind;
-import saker.compiler.utils.api.options.CompilationIdentifier;
+import saker.compiler.utils.api.CompilationIdentifier;
 import saker.nest.scriptinfo.reflection.annot.NestInformation;
 import saker.nest.scriptinfo.reflection.annot.NestTypeInformation;
 

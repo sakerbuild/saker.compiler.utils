@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package saker.compiler.utils.api.options;
+package saker.compiler.utils.api;
 
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -21,6 +21,7 @@ import java.util.Set;
 
 import saker.build.thirdparty.saker.util.ObjectUtils;
 import saker.build.thirdparty.saker.util.StringUtils;
+import saker.compiler.utils.impl.CompilationIdentifierImpl;
 
 /**
  * Interface for a compilation identifier that consists of dash separated lowercase name components.

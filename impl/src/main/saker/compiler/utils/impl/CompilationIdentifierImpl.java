@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package saker.compiler.utils.api.options;
+package saker.compiler.utils.impl;
 
 import java.io.Externalizable;
 import java.io.IOException;
@@ -29,8 +29,9 @@ import saker.build.thirdparty.saker.util.ImmutableUtils;
 import saker.build.thirdparty.saker.util.ObjectUtils;
 import saker.build.thirdparty.saker.util.StringUtils;
 import saker.build.thirdparty.saker.util.io.SerialUtils;
+import saker.compiler.utils.api.CompilationIdentifier;
 
-final class CompilationIdentifierImpl implements CompilationIdentifier, Externalizable {
+public final class CompilationIdentifierImpl implements CompilationIdentifier, Externalizable {
 	private static final long serialVersionUID = 1L;
 
 	private static final Pattern PATTERN_SPLIT = Pattern.compile("[-]+");
@@ -44,7 +45,7 @@ final class CompilationIdentifierImpl implements CompilationIdentifier, External
 	public CompilationIdentifierImpl() {
 	}
 
-	CompilationIdentifierImpl(Set<String> parts) {
+	public CompilationIdentifierImpl(Set<String> parts) {
 		this.parts = ImmutableUtils.unmodifiableSet(parts);
 	}
 

@@ -17,8 +17,8 @@ package testing.saker.compiler.utils.unit;
 
 import java.util.Map;
 
-import saker.compiler.utils.api.options.CompilationIdentifier;
-import saker.compiler.utils.api.options.CompilerUtils;
+import saker.compiler.utils.api.CompilationIdentifier;
+import saker.compiler.utils.api.CompilerUtils;
 import testing.saker.SakerTest;
 import testing.saker.SakerTestCase;
 
