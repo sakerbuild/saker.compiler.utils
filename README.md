@@ -1,5 +1,7 @@
 # saker.compiler.utils
 
+![Build status](https://img.shields.io/azure-devops/build/sakerbuild/e8424f6d-a9d2-4b28-97b8-61b981ca2af4/6/master)
+
 Utility library containing classes for supporting common functionality of language compiler build tasks in the [saker.build system](https://saker.build).
 
 See the [documentation](https://saker.build/saker.compiler.utils/doc/) for more information.
