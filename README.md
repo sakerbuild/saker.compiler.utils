@@ -1,6 +1,6 @@
 # saker.compiler.utils
 
-![Build status](https://img.shields.io/azure-devops/build/sakerbuild/e8424f6d-a9d2-4b28-97b8-61b981ca2af4/6/master)
+![Build status](https://img.shields.io/azure-devops/build/sakerbuild/e8424f6d-a9d2-4b28-97b8-61b981ca2af4/6/master) [![Latest version](https://mirror.nest.saker.build/badges/saker.compiler.utils/version.svg)](https://nest.saker.build/package/saker.compiler.utils "saker.compiler.utils | saker.nest")
 
 Utility library containing classes for supporting common functionality of language compiler build tasks in the [saker.build system](https://saker.build).
 
